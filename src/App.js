@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { StrictMode, useState } from 'react';
+import CityInput from './components/CityInput/index'
+import CityWeather from './components/CityWeather/index'
+const App = ()=>{
+    let [city,setcity] = useState("");
+    let [cityWeather,setcityweather] = useState("");
+    const fetchcityweather = ()=>{
+        let promise = fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=799ffbdcf83fcaa5d1130c7e1fcfa04c`);
+        promise.then(res => {
+            let temp = res.json();
+            temp.then(res=>{
+                if(res.cod == 200){
+                    setcityweather(res);
+                }
+            }).catch(rej=>{
+                console.log("error in json",rej);
+            })
+        }).catch(err => {
+            console.log("some error ",err);
+        })
+    }
+    return(
+    <StrictMode>
+        <CityInput fetchcityweather={fetchcityweather} city={city} setcity={setcity}></CityInput>
+        <CityWeather weatherinfo={cityWeather}></CityWeather>
+    </StrictMode>)
+    
 }
-
 export default App;
